@@ -1,39 +1,61 @@
 
 #include "scrawlio.h"
 
+#include <string>
 #include <fstream>
+#include <exception>
 
-using namespace scrawl;
 
-bool scrawl::WritePointCollection(const PointCollection points, const char* filename)
+namespace scrawl
 {
-	std::ofstream os;
-	os.open(filename, std::ofstream::out | std::ofstream::binary);
-
-	if (os.is_open())
+	class ScrawlBinFile
 	{
-		os.write(reinterpret_cast<const char*>(&points.size), sizeof(points.size));
-		os.close();
+		std::fstream m_stream;
 
-		return true;
+	public:
+
+		ScrawlBinFile(const char* file, open_mode mode)
+		{
+			unsigned int ios_mode = mode == open_mode::IN ? std::fstream::in : std::fstream::out;
+
+			m_stream.open(file, ios_mode | std::fstream::binary); 
+			if (!m_stream.is_open())
+				throw std::exception("ERROR: Can't open file to write");
+		}
+
+		~ScrawlBinFile()
+		{
+			m_stream.close();
+		}
+
+		ScrawlBinFile& operator << (const Chart& chart)
+		{
+			m_stream.write(reinterpret_cast<const char*>(&chart.size), sizeof(chart.size));
+			m_stream.flush();
+			return *this;
+		}
+
+		ScrawlBinFile& operator >> (Chart& chart)
+		{
+			m_stream.read(reinterpret_cast<char*>(&chart.size), sizeof(chart.size));
+			return *this;
+		}
+	};
+
+	BinFileStream::BinFileStream(const char* file, open_mode mode) : m_file(std::make_unique<ScrawlBinFile>(file, mode)) { }
+	BinFileStream::~BinFileStream() = default;
+
+	template<>
+	BinFileStream& BinFileStream::operator<<(const Chart& data)
+	{
+		*m_file << data;
+		return *this;
 	}
 
-	return false;
-}
-
-
-bool scrawl::ReadPointCollection(const char* filename, PointCollection& points)
-{
-	std::ifstream is;
-	is.open(filename, std::ofstream::in | std::ofstream::binary);
-
-	if (is.is_open())
+	template<>
+	BinFileStream& BinFileStream::operator>>(Chart& data)
 	{
-		is.read(reinterpret_cast<char*>(&points.size), sizeof(points.size));
-		is.close();
-
-		return true;
+		*m_file >> data;
+		return *this;
 	}
-
-	return false;
 }

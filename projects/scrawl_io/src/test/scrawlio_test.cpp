@@ -8,15 +8,21 @@ using namespace scrawl;
 
 TEST(IO, WriteReadAreEqual)
 {
-	const char* testFileName = "..\\..\\..\\result\\out\\Debug\\1.bin";
+	const char* testFileName = "..\\..\\..\\result\\out\\Debug\\2.bin";
 
-	PointCollection out;
+	Chart out;
 	out.size = 123;
+	{
+		ScrawlStream<BinFileStream> scrawlStream(testFileName, open_mode::OUT);
+		scrawlStream << out;
+	}
 
-	ASSERT_TRUE(WritePointCollection(out, testFileName));
+	Chart in;
+	{
+		ScrawlStream<BinFileStream> scrawlStream(testFileName, open_mode::IN);
+		scrawlStream >> in;
+	}
 
-	PointCollection in;
-	ASSERT_TRUE(ReadPointCollection(testFileName, in));
-
-	EXPECT_EQ(out.size, out.size);
+	EXPECT_EQ(in.size, out.size);
+	
 }
