@@ -2,6 +2,7 @@
 #define SCRAWL_IO_H_
 
 #include <memory>
+#include <vector>
 
 namespace scrawl
 {
@@ -22,32 +23,30 @@ namespace scrawl
 
 	struct Chart
 	{
-		int size;
-		Point *points;
+		int size; // wiil be removed
+		std::vector<Point> points;
 		Color color;
 	};
 
 
-	enum class open_mode { IN, OUT };
+	class ScrawlFileImpl;
 
-	class ScrawlBinFile;
-
-	class BinFileStream
+	class FileStream
 	{
 	public: 
 
-		BinFileStream(const char* file, open_mode mode);
+		FileStream(const char* file);
 
-		~BinFileStream();
-
-		template<class Data>
-		BinFileStream& operator << (const Data& data);
+		~FileStream();
 
 		template<class Data>
-		BinFileStream& operator >> (Data& data);
+		FileStream& operator << (const Data& data);
+
+		template<class Data>
+		FileStream& operator >> (Data& data);
 
 	private:
-		std::unique_ptr<ScrawlBinFile> m_file;
+		std::unique_ptr<ScrawlFileImpl> m_file;
 	};
 
 	template<class Writer>

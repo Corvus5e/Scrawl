@@ -8,18 +8,18 @@ using namespace scrawl;
 
 TEST(IO, WriteReadAreEqual)
 {
-	const char* testFileName = "..\\..\\..\\result\\out\\Debug\\2.bin";
+	const char* testFileName = "..\\..\\..\\result\\out\\Debug\\1.bin";
 
 	Chart out;
 	out.size = 123;
 	{
-		ScrawlStream<BinFileStream> scrawlStream(testFileName, open_mode::OUT);
+		ScrawlStream<FileStream> scrawlStream(testFileName);
 		scrawlStream << out;
 	}
 
 	Chart in;
 	{
-		ScrawlStream<BinFileStream> scrawlStream(testFileName, open_mode::IN);
+		ScrawlStream<FileStream> scrawlStream(testFileName);
 		scrawlStream >> in;
 	}
 
