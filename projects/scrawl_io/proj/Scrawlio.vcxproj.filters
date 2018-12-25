@@ -18,9 +18,15 @@
     <ClInclude Include="..\src\scrawlio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Chart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\scrawlio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Chart.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

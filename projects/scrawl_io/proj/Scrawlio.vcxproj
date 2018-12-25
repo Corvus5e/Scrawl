@@ -19,9 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\Chart.h" />
     <ClInclude Include="..\src\scrawlio.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Chart.cpp" />
     <ClCompile Include="..\src\scrawlio.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
