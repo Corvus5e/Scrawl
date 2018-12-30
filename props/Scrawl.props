@@ -3,11 +3,11 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <OUT>$(SolutionDir)\result\out\$(Configuration)</OUT>
-    <INTER>$(SolutionDir)\result\inter\$(Configuration)</INTER>
+    <INTER>$(SolutionDir)\result\inter\$(Configuration)\$(ProjectName)</INTER>
   </PropertyGroup>
   <PropertyGroup>
-    <OutDir>$(OUT)</OutDir>
-    <IntDir>$(INTER)</IntDir>
+    <OutDir>$(OUT)\</OutDir>
+    <IntDir>$(INTER)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup />
   <ItemGroup>

@@ -2,7 +2,7 @@
 #define SCRAWL_IO_H_
 
 #include <memory>
-#include <iterator>
+#include "Container.h"
 
 namespace scrawl
 {
@@ -10,7 +10,8 @@ namespace scrawl
 	{
 	public:
 
-		Point(double x = 0.0, double y = 0.0, double z = 0.0);
+		Point(double x = 0.0, double y = 0.0, double z = 0.0) : x(x), y(y), z(z)
+		{ }
 
 		double x;
 		double y;
@@ -21,7 +22,9 @@ namespace scrawl
 	{
 	public:
 
-		Color(double red = 0.0, double green = 0.0, double blue = 0.0, double alpha = 1.0);
+		Color(double red = 0.0, double green = 0.0, double blue = 0.0, double alpha = 1.0) :
+			         red(red), green(green), blue(blue), alpha(alpha)
+		{ }
 
 		double red;
 		double green;
@@ -47,73 +50,63 @@ namespace scrawl
 		int size;
 	};
 
-	template <typename T>
-	class Iterator : std::iterator<std::input_iterator_tag, T>
+	using PointsContainer = Container<Point>;
+
+	struct  ChartSettings
 	{
-	public:
-		virtual bool operator!=(Iterator const& rhs) = 0;
-		virtual bool operator==(Iterator const& rhs) = 0;
-		virtual typename Iterator::reference operator*() const = 0;
-		virtual typename Iterator::pointer operator->() = 0;
-		virtual Iterator& operator++() = 0;
-		virtual Iterator& operator++(int) = 0;
+		//How to draw points 
+		Font pointsFont;
+		POINTS_DRAW_MODE pointsDrawMode;
+
+		// How to draw line, which connects points
+		Font chartFont;
+		CHART_DRAW_MODE chartDrawMode;
 	};
 
-	template <typename T>
-	class Container
+	class Chart
 	{
 	public:
 
-		using iterator = Iterator<T>;
+		Chart(PointsContainer& points, ChartSettings& settings) :
+			m_points(points), m_settings(settings)
+		{ }
 
-		virtual size_t Size() const = 0;
+		const PointsContainer& GetPoints() const
+		{
+			return m_points;
+		}
 
-		virtual void Add(T&) = 0;
+	private:
 
-		virtual iterator Begin() = 0;
-
-		virtual iterator End() = 0;
+		PointsContainer m_points;
+		ChartSettings m_settings;
 	};
 
-	class Chart : public Container<Point>
+	using ChartsContainer = Container<Chart>;
+
+	class Scene
 	{
 	public:
 
-		// TODO: Add constructor to init all
+		void AddChart(Chart& chart)
+		{
+			m_charts.Add(chart);
+		}
 
-		// Container
-		size_t Size() const override;
+		const ChartsContainer& GetCharts() const
+		{
+			return m_charts;
+		}
 
-		void Add(Point& point) override;
-
-		Container<Point>::iterator Begin() override;
-
-		Container<Point>::iterator End() override;
-
-		// Chart
-		void SetPointFont(const Font& font);
-
-		void SetChartFont(const Font& font);
-
-		void SetPointDrawMode(POINTS_DRAW_MODE mode);
-
-		void SetChartDrawMode(CHART_DRAW_MODE mode);
-
-	protected:
-
-		std::unique_ptr<Container<Point>> m_points;
-
-		Font m_pointFont;
-		Font m_chartFont;
-		POINTS_DRAW_MODE m_pointsDrawMode;
-		CHART_DRAW_MODE m_chartDrawMode;
+	private:
+		ChartsContainer m_charts;
 	};
 
 	class Stream
 	{
 	public:
-		virtual Stream& operator << (const Chart& chart) = 0;
-		virtual Stream& operator >> (Chart& chart) = 0;
+		virtual Stream& operator << (const Scene& chart) = 0;
+		virtual Stream& operator >> (Scene& chart) = 0;
 	};
 
 	class StreamProvider
@@ -129,7 +122,7 @@ namespace scrawl
 	};
 
 	template<class Provider>
-	class SceneStream
+	class SceneStream : public Stream
 	{
 	public:
 		SceneStream(const char* file)
@@ -137,15 +130,13 @@ namespace scrawl
 			m_stream = Provider().GetStream(file);
 		}
 
-		template<class Data>
-		SceneStream& operator << (const Data& data)
+		SceneStream& operator << (const Scene& data) override
 		{
 			m_stream << data;
 			return *this;
 		}
 
-		template<class Data>
-		SceneStream& operator >> (Data& data)
+		SceneStream& operator >> (Scene& data) override
 		{
 			m_stream >> data;
 			return *this;
