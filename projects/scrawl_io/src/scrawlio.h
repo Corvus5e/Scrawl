@@ -1,8 +1,10 @@
 #ifndef SCRAWL_IO_H_
 #define SCRAWL_IO_H_
 
-#include <memory>
 #include "Container.h"
+
+#include <string>
+#include <memory>
 
 namespace scrawl
 {
@@ -67,8 +69,8 @@ namespace scrawl
 	{
 	public:
 
-		Chart(PointsContainer& points, ChartSettings& settings) :
-			m_points(points), m_settings(settings)
+		Chart(PointsContainer& points, ChartSettings& settings, const std::string& name = std::string("Chart")) :
+			m_points(points), m_settings(settings), m_name(name)
 		{ }
 
 		const PointsContainer& GetPoints() const
@@ -76,10 +78,16 @@ namespace scrawl
 			return m_points;
 		}
 
+		const std::string& Name() const
+		{
+			return m_name;
+		}
+
 	private:
 
 		PointsContainer m_points;
 		ChartSettings m_settings;
+		std::string m_name;
 	};
 
 	using ChartsContainer = Container<Chart>;
@@ -132,13 +140,13 @@ namespace scrawl
 
 		SceneStream& operator << (const Scene& data) override
 		{
-			m_stream << data;
+			*m_stream << data;
 			return *this;
 		}
 
 		SceneStream& operator >> (Scene& data) override
 		{
-			m_stream >> data;
+			*m_stream >> data;
 			return *this;
 		}
 

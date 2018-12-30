@@ -22,3 +22,28 @@ TEST(Container, Basic)
 
 	EXPECT_EQ(result, expected);
 }
+
+TEST(JSONStream, Basic)
+{
+	PointsContainer pc;
+	pc.Add({1, 1, 1});
+	pc.Add({ 2, 2, 2 });
+	pc.Add({ 3, 3, 3 });
+
+	ChartSettings cs;
+	Chart a(pc, cs, "A");
+	Chart b(pc, cs, "B");
+
+	Scene outScene;
+	outScene.AddChart(a);
+	outScene.AddChart(b);
+
+
+	SceneStream<JSONStreamProvider> ss("1.txt");
+	ss << outScene;
+
+	Scene inScene;
+	ss >> inScene;
+
+	//TODO: How to compare scenes ? operator == ?
+}

@@ -23,6 +23,7 @@
     <ClInclude Include="..\src\scrawlio.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\JSONStreamProvider.cpp" />
     <ClCompile Include="..\src\scrawlio.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
