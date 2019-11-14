@@ -1,7 +1,7 @@
 
 #include "Container.h"
 
-// I want to change too!
+// Ok, all will leave in peace
 
 namespace scrawl
 {
